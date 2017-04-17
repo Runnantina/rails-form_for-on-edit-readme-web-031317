@@ -5,6 +5,7 @@ class PostsController < ApplicationController
 
 	def show
 		@post = Post.find(params[:id])
+		# redirect_to post_path(@post)
 	end
 
 	def new
@@ -12,20 +13,28 @@ class PostsController < ApplicationController
 	end
 
 	def create
-	  @post = Post.new
-	  @post.title = params[:title]
-	  @post.description = params[:description]
-	  @post.save
-	  redirect_to post_path(@post)
-	end
+	
+    @post = Post.new(post_params)
+      if @post.save
+        redirect_to post_path(@post)
+			else
+				redirect_to post_path(@post)
+      end
+  end
 
 	def edit
 		@post = Post.find(params[:id])
 	end
 
 	def update
-	  @post = Post.find(params[:id])
-	  @post.update(title: params[:title], description: params[:description])
+		@post = Post.find(params[:id])
+	  @post.update(params.require(:post))
 	  redirect_to post_path(@post)
 	end
+
+	private
+
+	def post_params
+    params.permit('title', "description") #need to add current user
+  end
 end
